@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const Joi = require('joi')
-const { ImageCode, Constants } = require('struct')
+const { ImageCode, Constants, Util } = require('struct')
 const Jimp = require('jimp')
 const path = require('path')
 const im = require('gm').subClass({ imageMagick: true })
@@ -22,11 +22,7 @@ router.post('/', async (req, res, next) => {
     let buffer = await req.processes[token.ip || 'main'].sendMessage(body)
     res.status(200).set('Content-Type', 'image/png').send(buffer)
   } catch (e) {
-    if(e.name === 'ValidationError') return res.status(400).send(Constants.StatusBody.InvalidSchema(e.toString()))
-    if(e.statusText) return res.status(400).send(Constants.StatusBody.ResourceError(e.message))
-    if(e.special && e.special._type === 1) return res.status(400).send(Constants.StatusBody.ResourceError(e.special))
-    if(e.special && e.special._type === 2) return res.status(400).send(Constants.StatusBody.InvalidFileType(e.special))
-    res.status(500).send(Constants.StatusBody.ImageProcessError(e.message))
+    Util.processRequestErr(e, req, res)
   }
 })
 

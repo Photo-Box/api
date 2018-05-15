@@ -28,6 +28,13 @@ const Util = {
       }
       throw e
     }
+  },
+  processRequestErr(e, req, res){
+    if(e.name === 'ValidationError') return res.status(400).send(Constants.StatusBody.InvalidSchema(e.toString()))
+    if(e.statusText) return res.status(400).send(Constants.StatusBody.ResourceError(e.message))
+    if(e.msg.special && e.msg.special._type === 1) return res.status(400).send(Constants.StatusBody.ResourceError(e.msg.special))
+    if(e.msg.special && e.msg.special._type === 2) return res.status(400).send(Constants.StatusBody.InvalidFileType(e.msg.special))
+    res.status(500).send(Constants.StatusBody.ImageProcessError(e.message))
   }
 }
 
