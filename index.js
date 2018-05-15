@@ -37,9 +37,7 @@ app.use((req, res, next) => {
 
 
 let iterator = new FolderIterator(config.routePath, (path, iter) => {
-  console.log('====================================')
-  console.log('Path:', path)
-  console.log('Using Route:', path.slice(iter.path.length, -3))
+  if(config.testing) console.log('loading path', path)
   app.use('/v1' + path.slice(iter.path.length, -3).split('\\').join('/'), require(path))
 })
 
