@@ -1,0 +1,71 @@
+const rdb = require("rethinkdb")
+
+module.exports = class Database {
+  async connect({host = 'localhost', port, user, password, database}) {
+    let err, conn = await rdb.connect({host, port, user, password})
+    if(err) return this.onError(err)
+    console.log('[DB]', 'Connected')
+    if(database) conn.use(database)
+    conn.on('close', this.onClose.bind(this));
+    conn.on('timeout', this.onTimeout.bind(this));
+    this.conn = conn
+    this.host = host
+    this.port = port
+    this.user = user
+    this.password = password
+    this.database = database
+  }
+
+  get r() {
+    return rdb
+  }
+
+  addToken(token) {
+    rdb.table('apitokens').insert(token).run(this.conn)
+  }
+
+  async valid(token) {
+    try{
+      let data = await (await rdb.table('apitokens').filter({ token }).run(this.conn)).toArray()
+      return data[0]
+    } catch (e) {
+      return false
+    }
+  }
+
+  hasPerm(perm, token) {
+    let okay = false
+    console.log('PERMISSION TESTING:', perm, '=============')
+    token.permissions.map(p => {
+      console.log('>', p)
+      if(p === perm) return okay = true
+      if(perm.startsWith(p) && ['.', undefined].includes(perm.slice(p.length)[0])) return okay = true
+      console.log('< false')
+    })
+    return okay
+  }
+
+  getAuth(id) {
+    return rdb.table('apitokens').get(id).run(this.conn)
+  }
+
+  async reconnect() {
+    this.conn = await this.conn.reconnect({noreplyWait: false})
+    conn.on('close', this.onClose.bind(this));
+    conn.on('timeout', this.onTimeout.bind(this));
+  }
+
+  onError(err) {
+    console.log('[DB]', 'Error', err)
+  }
+
+  async onClose() {
+    console.log('[DB]', 'Closed')
+    await this.reconnect()
+  }
+
+  async onTimeout() {
+    console.log('[DB]', 'Connection Timeout')
+    await this.reconnect()
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "photobox-api",
+  "version": "1.0.0",
+  "description": "memegen on api",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Snazzah",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "color-thief-jimp": "^2.0.2",
+    "express": "^4.13.4",
+    "gifencoder": "^1.1.0",
+    "gm": "^1.23.0",
+    "jimp": "^0.2.27",
+    "joi": "^13.3.0",
+    "opencv": "^6.0.0",
+    "rethinkdb": "^2.3.3",
+    "snekfetch": "^3.6.4",
+    "token-generator": "^1.0.0",
+    "struct": "./struct"
+  }
+}
