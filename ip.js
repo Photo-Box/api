@@ -1,56 +1,10 @@
 const fs = require('fs')
 const path = require('path')
 const config = require('./config')
-
-class CodeLoader {
-  constructor(im, cPath){
-    this.codes = new Map()
-    this.path = path.resolve(cPath)
-    this.debug = im.debug
-    this.im = im
-  }
-
-  iterateFolder(folderPath){
-    let files = fs.readdirSync(folderPath);
-    files.map(file => {
-      let filePath = path.join(folderPath, file)
-      let stat = fs.lstatSync(filePath)
-      if(stat.isSymbolicLink()){
-        let realPath = fs.readlinkSync(filePath)
-        if(stat.isFile() && file.endsWith('.js')) {
-          loadCode(realPath)
-        }else if(stat.isDirectory()){
-          this.iterateFolder(realPath)
-        }
-      }else if(stat.isFile() && file.endsWith('.js')){
-        this.loadCode(filePath)
-      }else if(stat.isDirectory()){
-        this.iterateFolder(filePath)
-      }
-    });
-  }
-
-  loadCode(path){
-    if(this.debug) console.log('Loading code', path)
-    delete require.cache[require.resolve(path)]
-    let router = require(path)
-    if(!router.imageprocess) return
-    let code = new router.imageprocess(this.im)
-    code.path = path
-    this.codes.set(code.constructor.name, code)
-  }
-
-  reload(){
-    this.codes.clear()
-    this.iterateFolder(this.path)
-  }
-}
+const { FolderIterator } = require('struct')
 
 class ImageMaster {
   constructor(){
-    this.sharded = false
-    this.cl = new CodeLoader(this, config.routePath)
-
     process.on("message", this.process.bind(this))
     process.once('SIGINT', () => process.exit(0))
     process.on('unhandledRejection', (reason, p) => console.log("Unhandled Rejection at ", p, 'reason ', reason))
@@ -68,21 +22,24 @@ class ImageMaster {
         if(msg[k] && msg[k].type === "Buffer") msg[k] = new Buffer(msg[k].data);
       })
 
-      if(msg.code === 'start') {
-        console.log('Given initialize message')
-        this.cl.reload()
-        return
-      }
+      let code = null
+      let iter = new FolderIterator(config.routePath, p => {
+        let router = require(p)
+        if(!router.imageprocess || router.imageprocess.name != msg.code) return
+        code = new router.imageprocess(this)
+      })
+      await iter.iterate()
+      msg.quit = true
 
-      if(!this.cl.codes.has(msg.code)) return this.sendError(msg, new Error('Nonexistant code.'), 'master', true)
+      if(!code) return this.sendError(msg, new Error('Nonexistant code.'), 'master', true)
 
       try {
-        await this.cl.codes.get(msg.code).process(msg, this)
+        await code.process(msg, this)
       } catch(e) {
         this.sendError(msg, e)
       }
     } catch(e) {
-      process.send({code:'log',log:['critical error',e.stack]})
+      process.send({code:'log',log:['critical error',e.stack],quit:true})
     }
   }
   

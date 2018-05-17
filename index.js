@@ -4,7 +4,7 @@ const express = require('express')
 const path = require('path')
 const app = express()
 const config = require('./config')
-const ipm = require('./ipm')
+const ipm = new (require('./ipm'))(config.testing)
 const db = new (require('./db'))()
 const fs = require('fs')
 const http = require('http').Server(app)
@@ -12,18 +12,8 @@ const bodyParser = require('body-parser')
 const tokengen = require('token-generator')(config.tg)
 const { FolderIterator } = require('struct')
 
-let ips = {
-  main: new ipm('main')
-}
-
-ips.main.init()
-
-if(config.ips) config.ips.map(name => {
-  ips[name] = new ipm(name)
-  ips[name].init()
-})
-
 await db.connect(config.r)
+if(config.prefix) db.prefix = config.prefix
 app.set("json spaces", 4)
 app.use(bodyParser.json())
 app.use((req, res, next) => {
@@ -31,7 +21,7 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "*"
   })
-  Object.assign(req, { db, config, processes: ips, tokengen })
+  Object.assign(req, { db, config, ipm, tokengen })
   return next()
 })
 

@@ -35,12 +35,10 @@ module.exports = class Database {
 
   hasPerm(perm, token) {
     let okay = false
-    console.log('PERMISSION TESTING:', perm, '=============')
     token.permissions.map(p => {
-      console.log('>', p)
+      if(this.prefix) p = this.prefix + '.' + p
       if(p === perm) return okay = true
       if(perm.startsWith(p) && ['.', undefined].includes(perm.slice(p.length)[0])) return okay = true
-      console.log('< false')
     })
     return okay
   }

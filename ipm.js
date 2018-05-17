@@ -2,75 +2,49 @@ const child_process = require('child_process')
 let awaitedRequests = {}
 
 module.exports = class ImageProcess {
-  constructor(name){
-    this.name = name
+  constructor(debug) {
+    this.debug = debug
   }
 
   init() {
-    console.log(`[IMG ${this.name}]`, 'Initilizing process')
-    this.process = child_process.fork('./ip.js', { silent: true })
-    this.process.on('message', this.onMessage.bind(this))
-    this.process.on('disconnect', this.onDisconnect.bind(this))
-    this.process.on('error', err => console.log(`[IMG ${this.name}]`, 'ERROR GIVEN:', err))
-    this.process.send({ code: 'start' })
+    let proc = child_process.fork('./ip.js', { silent: true })
+    if(this.debug) proc.on('disconnect', () => console.log(`[IMG ${proc.pid}]`, 'disconnected'))
+    proc.on('error', err => console.log(`[IMG ${proc.pid}]`, 'error:', err))
+    return proc
   }
 
-  send(msg){
-    if(!msg.id) msg.id = Date.now().toString(16)
+  async send(msg){
+    let proc = this.init()
+    proc.send(msg)
+    let m = await this.wait(proc)
+    return m
+  }
+
+  wait(proc) {
     return new Promise((resolve, reject) => {
-      if(!this.process.connected) reject(new Error('Image process not connected.'));
-      if(!msg._timeout) msg._timeout = 60000;
-      let timeout = msg._timeout;
-      let timer = setTimeout(function() {
-        delete awaitedRequests[msg.id];
-        console.log("Time out", msg.id, new Error('Request timed out: '+timeout+'ms'))
-        reject(new Error('Request timed out: '+timeout+'ms'));
-      }, timeout);
-      if (awaitedRequests[msg.id]) awaitedRequests[msg.id].reject(new Error('Request was overwritten'))
-      awaitedRequests[msg.id] = {
-        resolve: function(msg2) { clearTimeout(timer); resolve(msg2); },
-        reject: function(e) { clearTimeout(timer); reject(e); }
-      };
-      delete msg._timeout;
-      if(this.debug) console.log("Sending to image process", msg);
-      this.process.send(msg);
+      proc.on('message', msg => {
+        if(msg.code === "log") console.log(`[IMG ${proc.pid}]`, ...msg.log)
+        if(msg.code === "ok"){
+          if(this.debug) console.log(`[IMG ${proc.pid}]`, 'loaded')
+          proc.stdout.on('data', data => {
+            console.log(`[IMG ${proc.pid} to MAIN]`, data.toString())
+          })
+        };
+        if(msg.status === 'fail') reject({ message: msg.message, stack: msg.err, msg, toString() { return msg.message } })
+        if(msg.quit) {
+          proc.kill()
+          if(this.debug) console.log(`[IMG ${proc.pid}]`, `done "${msg.code}" in ${msg.uptime} seconds`)
+          resolve(msg)
+        }
+      })
     });
   }
 
-  sendMessage(msg){
+  sendMessage(msg) {
     return new Promise((resolve, reject) => {
       this.send(msg).then(res => {
         resolve(new Buffer(res.buffer, 'base64'), res);
       }).catch(reject);
     });
-  }
-
-  kill(){
-    this.process.kill('SIGHUP');
-  }
-
-  onMessage(msg) {
-    if(msg.code === "log") return console.log(`[IMG ${this.name}]`, ...msg.log)
-    if(msg.code === "ok"){
-      console.log(`[IMG ${this.name}]`, 'Process loaded')
-      this.process.stdout.on('data', data => {
-        //console.log("coughtlog", data)
-        console.log(`[IMG ${this.name} to MAIN]`, data.toString())
-      })
-      return;
-    };
-    //if(this.debug) console.log("Main cought msg", msg);
-    if (awaitedRequests.hasOwnProperty(msg.id)) {
-      if(msg.status == 'success'){
-        awaitedRequests[msg.id].resolve(msg);
-      }else{
-        awaitedRequests[msg.id].reject({ message: msg.message, stack: msg.err, msg, toString() { return msg.message } });
-      }
-    }
-  }
-
-  onDisconnect() {
-    console.log(`[IMG ${this.name}]`, 'Disconnected. Reconnecting in 10 seconds...')
-    setTimeout(() => this.init(), 10000)
   }
 }

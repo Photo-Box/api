@@ -19,7 +19,7 @@ router.post('/', async (req, res, next) => {
     await router.schema.validate(req.body)
     let body = req.body
     body.code = router.code
-    let buffer = await req.processes[token.ip || 'main'].sendMessage(body)
+    let buffer = await req.ipm.sendMessage(body)
     res.status(200).set('Content-Type', 'image/png').send(buffer)
   } catch (e) {
     Util.processRequestErr(e, req, res)
