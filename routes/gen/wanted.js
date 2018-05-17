@@ -9,7 +9,7 @@ router.code = 'wanted'
 
 router.schema = Joi.object().keys({
   picture: Joi.string().uri(),
-  name: Joi.string()
+  name: Joi.string().max(30)
 })
 
 router.post('/', async (req, res, next) => {
