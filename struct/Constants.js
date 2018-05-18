@@ -7,10 +7,10 @@ const Constants = {
       type: 1,
       message: 'Invalid Authentication.'
     },
-    BadPerms: perm => ({
+    BadPerms: (perm, prefix) => ({
       status: 401,
       type: 2,
-      message: 'Missing Permission: ' + perm
+      message: 'Missing Permission: ' + (prefix ? prefix + '.' : '') + perm
     }),
     InvalidSchema: e => ({
       status: 400,

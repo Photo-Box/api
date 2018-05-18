@@ -15,19 +15,7 @@ router.schema = Joi.object().keys({
   text: Joi.string().max(150)
 })
 
-router.post('/', async (req, res, next) => {
-  let token = await req.db.valid(req.get('Authorization'))
-  if(!req.db.hasPerm(router.perm, token)) return res.status(401).send(Constants.StatusBody.BadPerms(router.perm))
-  try {
-    await router.schema.validate(req.body)
-    let body = req.body
-    body.code = router.code
-    let buffer = await req.ipm.sendMessage(body)
-    res.status(200).set('Content-Type', 'image/png').send(buffer)
-  } catch (e) {
-    Util.processRequestErr(e, req, res)
-  }
-})
+Util.genericTemplatePost(router)
 
 router.imageprocess = class ttt extends ImageCode {
   async process(msg) {

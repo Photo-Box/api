@@ -30,7 +30,10 @@ module.exports = class ImageProcess {
             console.log(`[IMG ${proc.pid} to MAIN]`, data.toString())
           })
         };
-        if(msg.status === 'fail') reject({ message: msg.message, stack: msg.err, msg, toString() { return msg.message } })
+        if(msg.status === 'fail') {
+          console.log(`[IMG ${proc.pid}]`, 'file error:', msg.err)
+          reject({ message: msg.message, stack: msg.err, msg, toString() { return msg.message } })
+        }
         if(msg.quit) {
           proc.kill()
           if(this.debug) console.log(`[IMG ${proc.pid}]`, `done "${msg.code}" in ${msg.uptime} seconds`)

@@ -13,6 +13,7 @@ const tokengen = require('token-generator')(config.tg)
 const { FolderIterator } = require('struct')
 
 await db.connect(config.r)
+db.debug = config.testing
 if(config.prefix) db.prefix = config.prefix
 app.set("json spaces", 4)
 app.use(bodyParser.json())
