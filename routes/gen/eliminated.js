@@ -5,6 +5,7 @@ const Jimp = require('jimp')
 const path = require('path')
 const im = require('gm').subClass({ imageMagick: true })
 
+router.pathVer = 1
 router.perm = 'image.gen.light.eliminated'
 router.code = 'eliminated'
 

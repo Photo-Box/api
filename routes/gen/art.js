@@ -4,6 +4,7 @@ const { ImageCode, Constants, Util } = require('struct')
 const Jimp = require('jimp')
 const path = require('path')
 
+router.pathVer = 1
 router.perm = 'image.gen.light.art'
 router.code = 'art'
 

@@ -5,8 +5,9 @@ const Jimp = require('jimp')
 const path = require('path')
 const im = require('gm').subClass({ imageMagick: true })
 
-router.perm = 'image.gen.medium.starvstheforceof'
-router.code = 'starvstheforceof'
+router.pathVer = 1
+router.perm = 'image.gen.medium.starvstheforcesof'
+router.code = 'starvstheforcesof'
 
 router.schema = Joi.object().keys({
   picture: Joi.string().uri()
@@ -26,7 +27,7 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.imageprocess = class starvstheforceof extends ImageCode {
+router.imageprocess = class starvstheforcesof extends ImageCode {
   async process(msg) {
     let avatar = await Jimp.read(await Util.requestResource(msg.avatar))
     avatar.resize(700, 700)
@@ -43,7 +44,7 @@ router.imageprocess = class starvstheforceof extends ImageCode {
 
     let jBgImg = await this.imToJimp(bgImg)
     jBgImg.resize(734, 828)
-    let foreground = await Jimp.read(path.join(Constants.assetPath, 'starvstheforceof.png'))
+    let foreground = await Jimp.read(path.join(Constants.assetPath, 'starvstheforcesof.png'))
     foreground.resize(960, 540)
 
     let actions = []
