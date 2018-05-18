@@ -100,7 +100,7 @@ module.exports = class ImageCode {
 
     let image = im().command('convert')
 
-    image.font(path.join(__dirname, '..', 'assets', 'fonts', options.font))
+    image.font(path.join(__dirname, '..', 'assets', 'fonts', options.font), options.fontsize)
     image.out('-size').out(options.size)
 
     image.out('-background').out('transparent')

@@ -6,7 +6,8 @@ Here are some font you need to download for things to work and stuff:
 - [whitney.ttf](https://canary.discordapp.com/assets/6c6374bad0b0b6d204d8d6dc4a18d820.woff), Convert with [this](https://andrewsun.com/tools/woffer-woff-font-converter/)
 - [tahoma.ttf](http://www.fontpalace.com/font-download/Tahoma/)
 - comic.ttf *(It can be found inside every Windows PC from their fonts folder, must be Regular)*
-- impact.ttf *(same as comic.ttf)*
+- impact.ttf *(same for comic.ttf)*
+- arialbd.ttf *(same for comic.ttf, Bolded)*
 - [edmunds.ttf](https://www.dafont.com/edmunds.font) *use distressed version*
 - [sunshine.ttf](https://www.dafont.com/a-little-sunshine.font)
 
