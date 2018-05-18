@@ -29,7 +29,7 @@ router.post('/', async (req, res, next) => {
 
 router.imageprocess = class nickelback extends ImageCode {
   async process(msg) {
-    let containedavatar = (await Jimp.read(await Util.requestResource(msg.avatar))).contain(400, 280)
+    let containedavatar = (await Jimp.read(await Util.requestResource(msg.picture))).contain(400, 280)
     let avatar = (new Jimp(446, 356)).composite(containedavatar, 0, 0)
 
     let imavatar = im(await this.jimpBuffer(avatar))

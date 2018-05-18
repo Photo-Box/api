@@ -29,7 +29,7 @@ router.post('/', async (req, res, next) => {
 
 router.imageprocess = class waifu extends ImageCode {
   async process(msg) {
-    let containedavatar = (await Jimp.read(msg.avatar)).cover(155, 173)
+    let containedavatar = (await Jimp.read(msg.picture)).cover(155, 173)
     let avatar = (new Jimp(155, 173)).composite(containedavatar, 0, 0)
 
     let imavatar = im(await this.jimpBuffer(avatar))

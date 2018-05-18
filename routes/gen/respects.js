@@ -29,7 +29,7 @@ router.post('/', async (req, res, next) => {
 
 router.imageprocess = class respects extends ImageCode {
   async process(msg) {
-    let avatar = await Jimp.read(await Util.requestResource(msg.avatar))
+    let avatar = await Jimp.read(await Util.requestResource(msg.picture))
     avatar.resize(110, 110)
 
     let bgImg = await this.jimpToIM(avatar)
