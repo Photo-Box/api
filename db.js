@@ -20,6 +20,24 @@ module.exports = class Database {
     return rdb
   }
 
+  async ticketValid(profile, ticket) {
+    try{
+      let data = await rdb.db('Turquoise').table('tickets').get(ticket).run(this.conn)
+      if(data.profile !== profile) return false
+      if(data.expire < Date.now()) {
+        await rdb.db('Turquoise').table('tickets').get(ticket).delete().run(this.conn)
+        return false
+      }
+      return true
+    } catch (e) {
+      return false
+    }
+  }
+
+  getTicket(ticket) {
+    return rdb.db('Turquoise').table('tickets').get(ticket).run(this.conn)
+  }
+
   addToken(token) {
     rdb.table('apitokens').insert(token).run(this.conn)
   }
@@ -45,6 +63,10 @@ module.exports = class Database {
 
   getAuth(id) {
     return rdb.table('apitokens').get(id).run(this.conn)
+  }
+
+  replaceToken(id, token) {
+    return rdb.table('apitokens').get(id).update({ token }).run(this.conn)
   }
 
   async reconnect() {
