@@ -1,5 +1,6 @@
 const snekfetch = require('snekfetch')
 const Constants = require('./Constants')
+const Joi = require('joi')
 
 const Util = {
   async requestResource(url) {
@@ -51,6 +52,12 @@ const Util = {
       } catch (e) {
         Util.processRequestErr(e, req, res)
       }
+    })
+  },
+  genericFilterPost(router, contentype) {
+    this.genericTemplatePost(router, contentype)
+    router.schema = Joi.object().keys({
+      picture: Joi.string().uri()
     })
   }
 }
