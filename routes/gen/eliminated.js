@@ -10,7 +10,8 @@ router.perm = 'image.gen.medium.eliminated'
 router.code = 'eliminated'
 
 router.schema = Joi.object().keys({
-  text: Joi.string().max(30)
+  text: Joi.string().max(30),
+  fire: Joi.number().optional()
 })
 
 Util.genericTemplatePost(router)
@@ -43,7 +44,7 @@ router.imageprocess = class eliminated extends ImageCode {
     img3.out('-fill').out('#ffffff')
     img3.out('-background').out('transparent')
     img3.out('-gravity').out('north')
-    img3.out(`caption:${this.rInt(60,100)}`)
+    img3.out(`caption:${msg.fire || this.rInt(60,100)}`)
 
     let eltext = await this.imToJimpAutocrop(img)
     let prefix = await this.imToJimpAutocrop(img2)
