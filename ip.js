@@ -9,7 +9,7 @@ class ImageMaster {
     process.once('SIGINT', () => process.exit(0))
     process.on('unhandledRejection', (reason, p) => console.log("Unhandled Rejection at ", p, 'reason ', reason))
     process.once('uncaughtException', err => {
-      this.error('Uncaught Exception:', err)
+      console.error('Uncaught Exception:', err)
       setTimeout(() => process.exit(0), 2500)
     })
 

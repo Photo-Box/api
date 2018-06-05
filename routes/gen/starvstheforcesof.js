@@ -2,6 +2,7 @@ const router = require('express').Router()
 const Joi = require('joi')
 const { ImageCode, Constants, Util } = require('struct')
 const Jimp = require('jimp')
+const colorThief = require('color-thief-jimp')
 const path = require('path')
 const im = require('gm').subClass({ imageMagick: true })
 
