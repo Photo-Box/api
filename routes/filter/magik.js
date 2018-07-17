@@ -3,7 +3,7 @@ const { ImageCode, Util } = require('struct')
 const Jimp = require('jimp')
 
 router.pathVer = 1
-router.perm = 'image.gen.heavy.magik'
+router.perm = 'image.filter.heavy.magik'
 router.code = 'magik'
 
 Util.genericFilterPost(router)

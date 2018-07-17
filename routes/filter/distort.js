@@ -4,7 +4,7 @@ const { ImageCode, Util } = require('struct')
 const Jimp = require('jimp')
 
 router.pathVer = 1
-router.perm = 'image.gen.heavy.distort'
+router.perm = 'image.filter.heavy.distort'
 router.code = 'distort'
 router.schema = Joi.object().keys({
   picture: Joi.string().uri(),

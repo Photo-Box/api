@@ -3,7 +3,7 @@ const { ImageCode, Util } = require('struct')
 const Jimp = require('jimp')
 
 router.pathVer = 1
-router.perm = 'image.gen.light.sharpen'
+router.perm = 'image.filter.light.sharpen'
 router.code = 'sharpen'
 
 Util.genericFilterPost(router)

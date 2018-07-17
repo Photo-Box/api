@@ -3,7 +3,7 @@ const { ImageCode, Util } = require('struct')
 const Jimp = require('jimp')
 
 router.pathVer = 1
-router.perm = 'image.gen.light.sepia'
+router.perm = 'image.filter.light.sepia'
 router.code = 'sepia'
 
 Util.genericFilterPost(router)

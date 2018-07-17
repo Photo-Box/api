@@ -8,7 +8,7 @@ const embossMatrix = [
 ]
 
 router.pathVer = 1
-router.perm = 'image.gen.heavy.deepfry'
+router.perm = 'image.filter.heavy.deepfry'
 router.code = 'deepfry'
 
 Util.genericFilterPost(router)

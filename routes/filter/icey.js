@@ -4,7 +4,7 @@ const Jimp = require('jimp')
 const colorThief = require('color-thief-jimp')
 
 router.pathVer = 1
-router.perm = 'image.gen.light.icey'
+router.perm = 'image.filter.light.icey'
 router.code = 'icey'
 
 Util.genericFilterPost(router)
