@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { ImageCode, Constants, Util } = require('struct')
+const { ImageCode, Util } = require('struct')
 const Jimp = require('jimp')
 
 router.pathVer = 1
