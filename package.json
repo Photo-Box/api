@@ -19,6 +19,7 @@
     "rethinkdb": "^2.3.3",
     "snekfetch": "^3.6.4",
     "token-generator": "^1.0.0",
+    "faced": "^1.2.0",
     "struct": "./struct"
   }
 }

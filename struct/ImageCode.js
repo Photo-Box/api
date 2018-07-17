@@ -3,6 +3,7 @@ const path = require('path')
 const sf = require('snekfetch')
 const im = require('gm').subClass({ imageMagick: true })
 const GIFEncoder = require('gifencoder')
+const Faced = new (require('faced'))()
 
 module.exports = class ImageCode {
   constructor(im) {
@@ -136,6 +137,14 @@ module.exports = class ImageCode {
       encoder.setDelay(delay)
       frames.map(frame => encoder.addFrame(frame))
       encoder.finish();
+    });
+  }
+
+  detectFaces(img) {
+    return new Promise(async (resolve, reject) => {
+      this.toBuffer(img).then(buf => {
+        Faced.detect(buf, (...a) => resolve(a))
+      }).catch(reject)
     });
   }
 }
