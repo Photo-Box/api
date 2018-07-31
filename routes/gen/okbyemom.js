@@ -10,7 +10,7 @@ router.perm = 'image.gen.light.okbyemom'
 router.code = 'okbyemom'
 
 router.schema = Joi.object().keys({
-  picture: Joi.string().uri()
+  text: Joi.string().max(30)
 })
 
 Util.genericTemplatePost(router)
