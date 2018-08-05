@@ -11,7 +11,8 @@ Util.genericFilterPost(router)
 
 router.imageprocess = class icey extends ImageCode {
   async process(msg) {
-    let img = await Jimp.read(msg.picture)
+    let picture = await Util.requestResource(msg.picture)
+    let img = await Jimp.read(picture)
     let avg = colorThief.getColor(img).reduce((p, c) => p + c) / 3;
     img.scan(0, 0, img.bitmap.width, img.bitmap.height, function (x, y, idx) {
       var red = img.bitmap.data[idx];

@@ -15,7 +15,8 @@ Util.genericFilterPost(router)
 
 router.imageprocess = class deepfry extends ImageCode {
   async process(msg) {
-    let img = await Jimp.read(msg.picture)
+    let picture = await Util.requestResource(msg.picture)
+    let img = await Jimp.read(picture)
     let width = img.bitmap.width
     let height = img.bitmap.height
     img.scale(.75, Jimp.RESIZE_HERMITE)

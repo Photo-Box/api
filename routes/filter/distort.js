@@ -22,7 +22,8 @@ Util.genericTemplatePost(router)
 
 router.imageprocess = class distort extends ImageCode {
   async process(msg) {
-    let img1 = await Jimp.read(msg.picture)
+    let picture = await Util.requestResource(msg.picture)
+    let img1 = await Jimp.read(picture)
     let special = Object.keys(msg).length !== 3
     let filters = special ? [] : [
       { apply: this.rBool() ? 'desaturate' : 'saturate', params: [this.rInt(40, 80)] },
@@ -48,7 +49,6 @@ router.imageprocess = class distort extends ImageCode {
       if(msg.swirl !== undefined) img2.out('-swirl').out(`${(msg.swirl < 0) ? '+' : '-'}${msg.swirl}`)
       if(msg.roll) img2.out('-roll').out(`+${msg.horizontalRoll || 0}+${msg.verticalRoll || 0}`)
     }
-    console.log(msg, special, filters)
 
     this.sendIM(msg, img2)
   }

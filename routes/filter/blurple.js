@@ -10,7 +10,8 @@ Util.genericFilterPost(router)
 
 router.imageprocess = class blurple extends ImageCode {
   async process(msg) {
-    let img = await Jimp.read(msg.picture)
+    let picture = await Util.requestResource(msg.picture)
+    let img = await Jimp.read(picture)
     img.greyscale().scan(0, 0, img.bitmap.width, img.bitmap.height, function (x, y, idx) {
       var red = img.bitmap.data[idx];
       var green = img.bitmap.data[idx+1];

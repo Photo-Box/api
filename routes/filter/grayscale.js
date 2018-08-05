@@ -10,7 +10,8 @@ Util.genericFilterPost(router)
 
 router.imageprocess = class grayscale extends ImageCode {
   async process(msg) {
-    let img = await Jimp.read(msg.picture)
+    let picture = await Util.requestResource(msg.picture)
+    let img = await Jimp.read(picture)
     img.grayscale()
 
     this.sendJimp(msg, img)
